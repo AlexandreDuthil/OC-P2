@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 
 
 # Récupération des liens de toutes pages catégories avec des livres, incrémentation d'une liste "links"
-def get_categories_links(url):
+def get_category_links(url):
     response = requests.get(url)
     if response.ok:
         links = []
@@ -53,5 +53,22 @@ def next_page(url, x):
     url = ("/").join(url)
     return url
 
+# scraping de la page d'un livre
+def book_page_scraper(url,file):
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, "html.parser")
+    title = (soup.find("h1")).text
+    category = soup.find("ul").findAll("a")
+    category = category[2].text
+    product_description = soup.findAll("p")
+    product_description = (product_description[-1].text)
+    tr_list = soup.findAll("tr")
+    td = []
+    for tr in tr_list:
+        td += tr.find('td')
+    universal_product_code = td[0]
+    price_including_tax = td[3].replace("Â£","")
+    price_excluding_tax = td[2].replace("Â£", "")
+    print(td)
 
 
