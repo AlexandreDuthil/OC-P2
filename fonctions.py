@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+import re
 
 
 # Récupération des liens de toutes pages catégories avec des livres, incrémentation d'une liste "links"
@@ -48,7 +49,7 @@ def get_book_links(url):
 # modification d'un lien pour passer aux pages suivantes
 def next_page(url, x):
     url = url.split("/")
-    del url[7]
+    del url[-1]
     url.append("page-{}.html".format(str(x)))
     url = ("/").join(url)
     return url
@@ -59,9 +60,9 @@ def book_page_scraper(url,file):
     soup = BeautifulSoup(response.text, "html.parser")
     title = (soup.find("h1")).text
     category = soup.find("ul").findAll("a")
-    category = category[2].text
+    category = category[-1].text
     product_description = soup.findAll("p")
-    product_description = (product_description[-1].text)
+    product_description = (product_description[3].text)
     tr_list = soup.findAll("tr")
     td = []
     for tr in tr_list:
@@ -69,6 +70,26 @@ def book_page_scraper(url,file):
     universal_product_code = td[0]
     price_including_tax = td[3].replace("Â£","")
     price_excluding_tax = td[2].replace("Â£", "")
-    print(td)
+    number_available = td[5]
+    number_available = re.search("[0-9]+",number_available)
+    number_available = number_available.group(0)
+    image_url = (soup.find("img"))["src"]
+    image_url = image_url.replace("../..", "https://books.toscrape.com")
+    review_rating = soup.find("div", {"class": "col-sm-6 product_main"}).findAll("p")
+    review_rating = re.search("star-rating [A-Z][a-z]+", str(review_rating))
+    review_rating = review_rating.group(0)
+    if review_rating == "star-rating Zero": review_rating = 0
+    if review_rating == "star-rating One": review_rating = 1
+    if review_rating == "star-rating Two": review_rating = 2
+    if review_rating == "star-rating Three": review_rating = 3
+    if review_rating == "star-rating Four": review_rating = 4
+    if review_rating == "star-rating Five": review_rating = 5
+    file.write(url+"<"+universal_product_code+"<"+title+"<"+price_including_tax+"<"+price_excluding_tax+"<"+number_available+"<"+product_description+"<"+category+"<"+str(review_rating)+"<"+image_url+"\n")
 
-
+# récupération du nom de la catégorie via son URL
+def get_category_name(url):
+    category = re.search("([a-z]+[-])*[a-z]+_[0-9]+", url)
+    category = category.group(0)
+    category = category.split("_")
+    category = category[0]
+    return category
