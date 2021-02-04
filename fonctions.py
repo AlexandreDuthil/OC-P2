@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import re
+import os
 
 
 # Récupération des liens de toutes les pages catégories, incrémentation d'une liste "links"
@@ -80,7 +81,7 @@ def book_page_scraper(url,file):
         number_available = number_available.group(0)
         image_url = (soup.find("img"))["src"]
         image_url = image_url.replace("../..", "https://books.toscrape.com")
-        download_image(image_url, "images/" + title + ".png")
+        download_image(image_url, "images/" + title.replace("/","-") + ".png")
         review_rating = soup.find("div", {"class": "col-sm-6 product_main"}).findAll("p")
         review_rating = re.search("star-rating [A-Z][a-z]+", str(review_rating))
         review_rating = review_rating.group(0)
@@ -107,5 +108,11 @@ def get_category_name(url):
 def download_image(url, image_png):
     image = requests.get(url)
     if image.ok:
-        with open(image_png, "wb") as img:
-            img.write(image.content)
+        if not os.path.exists(image_png):
+            with open(image_png, "wb") as img:
+                img.write(image.content)
+        else :
+            with open(image_png.replace(".png",".2.png"), "wb") as img:
+                img.write(image.content)
+    else :
+        print("L'image ({}) '{}' n'a pas pu être téléchargée".format(url, image_png))

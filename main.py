@@ -1,8 +1,9 @@
 from fonctions import *
 import os
-
-os.mkdir("images")
-os.mkdir("donnees.csv")
+if not os.path.exists("images"):
+    os.mkdir("images")
+if not os.path.exists("donnees_csv"):
+    os.mkdir("donnees_csv")
 
 # outil de control du fonctionnement
 book_number = 0
@@ -15,7 +16,7 @@ y = 0
 for link in category_links :
     # outil de control du fonctionnement
     y += 1
-    print(y)
+    print(str(y)+"/"+str(len(category_links)))
 
     # création du fichier CSV au nom de la catégorie
 
