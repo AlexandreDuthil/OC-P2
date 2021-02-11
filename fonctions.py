@@ -13,10 +13,11 @@ def get_category_links(url):
         soup = BeautifulSoup(response.text, "html.parser")
         aside = soup.find("aside")
         ahrefs = aside.findAll("a")
-        for a in ahrefs:
+        for a in ahrefs :
             link = a["href"]
             links.append("https://books.toscrape.com/" + link)
         del links[0]
+        del links[2:]
     return links
 
 # Récupération du nombre de livres dans la catégorie passée en paramètre, et donc du nombre de pages
@@ -47,6 +48,7 @@ def get_book_links(url):
         link = ("/").join(link)
         link = "https://books.toscrape.com/catalogue/" + link
         book_links.append(link)
+        del book_links[2:]
     return book_links
 
 # modification d'un lien pour passer aux pages suivantes
