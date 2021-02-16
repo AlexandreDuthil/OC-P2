@@ -2,7 +2,7 @@ from fonctions import *
 import os
 
 os.mkdir("images")
-os.mkdir("donnees.csv")
+os.mkdir("donnees_csv")
 
 # outil de control du fonctionnement
 book_number = 0
@@ -30,7 +30,7 @@ for link in category_links :
         book_links = get_book_links(link)
         for link2 in book_links:
             book_page_scraper(link2, file)
-        book_number += len(get_book_links(link))
+        # book_number += len(get_book_links(link))
 
 
         # récupération des liens présents sur les pages suivantes
@@ -39,11 +39,11 @@ for link in category_links :
             for i in range(get_page_number(link)-1):
                 x = i + 2
                 new_link = next_page(link, x)
-                book_links = get_book_links(new_link)
+                # book_links = get_book_links(new_link)
 
                 for link3 in book_links:
                     book_page_scraper(link3, file)
-                book_number += len(get_book_links(new_link))
+                # book_number += len(get_book_links(new_link))
 
 print(book_number)
 
