@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import re
 
+
 class Category:
     def __init__(self, name, url):
         self.name = name
